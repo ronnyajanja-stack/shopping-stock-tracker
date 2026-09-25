@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Stock Tracker</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #334155;
+    }
+
+    .dashboard-header {
+      background: var(--primary-gradient);
+      color: white;
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
+    }
+
+    .custom-card {
+      background: var(--card-bg);
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+      margin-bottom: 2rem;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .custom-card:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+    }
+
+    .card-header-bar {
+      padding: 1rem 1.5rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .card-header-bar.stock { color: #4f46e5; }
+    .card-header-bar.action { color: #059669; }
+    .card-header-bar.add { color: #d97706; }
+    .card-header-bar.history { color: #6366f1; }
+
+    .table thead th {
+      background-color: #f8fafc;
+      color: #64748b;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0.9rem 1.25rem;
+    }
+
+    .table tbody td {
+      padding: 1rem 1.25rem;
+      vertical-align: middle;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .table tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .badge-in-stock {
+      background-color: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .badge-low-stock {
+      background-color: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .badge-action-initial {
+      background-color: #ede9fe;
+      color: #6d28d9;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 0.35rem 0.7rem;
+    }
+
+    .badge-action-restock {
+      background-color: #dbeafe;
+      color: #1d4ed8;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 0.35rem 0.7rem;
+    }
+
+    .badge-action-use {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 0.35rem 0.7rem;
+    }
+
+    .btn-gradient-primary {
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0.55rem 1.25rem;
+      transition: opacity 0.2s ease;
+    }
+
+    .btn-gradient-primary:hover {
+      opacity: 0.92;
+      color: white;
+    }
+
+    .btn-gradient-success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    .btn-gradient-success:hover {
+      opacity: 0.92;
+      color: white;
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+      border: 1.5px solid #e2e8f0;
+      padding: 0.55rem 0.9rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container py-4" style="max-width: 900px;">
+  
+  <!-- Header Banner -->
+  <div class="dashboard-header d-flex justify-content-between align-items-center">
+    <div>
+      <h2 class="mb-1 fw-bold"><i class="bi bi-box-seam me-2"></i>Shopping Stock Tracker</h2>
+      <p class="mb-0 text-white-50">Manage inventory, household consumables & transactions</p>
+    </div>
+    <span class="badge bg-light text-dark px-3 py-2 rounded-pill"><i class="bi bi-check-circle-fill text-success me-1"></i> Live</span>
+  </div>
+
+  <!-- Stock Table Card -->
+  <div class="custom-card">
+    <div class="card-header-bar stock">
+      <i class="bi bi-layers-fill"></i> Current Inventory
+    </div>
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Current Balance</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in stock %}
+          <tr>
+            <td class="fw-semibold">{{ row.item_name }}</td>
+            <td><strong class="fs-5">{{ row.balance }}</strong> <span class="text-muted ms-1">{{ row.unit or '' }}</span></td>
+            <td>
+              {% if row.balance > 0 %}
+                <span class="badge-in-stock"><i class="bi bi-check2"></i> In Stock</span>
+              {% else %}
+                <span class="badge-low-stock"><i class="bi bi-exclamation-triangle"></i> Out of Stock</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <!-- Log Usage / Purchase Form Card -->
+    <div class="col-md-7">
+      <div class="custom-card h-100">
+        <div class="card-header-bar action">
+          <i class="bi bi-arrow-left-right"></i> Log Usage or Purchase
+        </div>
+        <div class="p-3">
+          <form action="/log" method="POST">
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-bold">ITEM</label>
+              <input list="item-options" name="item_name" class="form-control" placeholder="Select or type item..." required>
+              <datalist id="item-options">
+                {% for row in stock %}
+                  <option value="{{ row.item_name }}"></option>
+                {% endfor %}
+              </datalist>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label text-muted small fw-bold">ACTION</label>
+                <select name="action" class="form-select">
+                  <option value="USE">Use (-)</option>
+                  <option value="RESTOCK">Purchase (+)</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label text-muted small fw-bold">QUANTITY</label>
+                <input type="number" step="any" name="quantity" class="form-control" placeholder="1.0" required>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-gradient-primary w-100">
+              <i class="bi bi-send-fill me-1"></i> Submit Transaction
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Add New Item Card -->
+    <div class="col-md-5">
+      <div class="custom-card h-100">
+        <div class="card-header-bar add">
+          <i class="bi bi-plus-circle-fill"></i> Add Brand New Item
+        </div>
+        <div class="p-3">
+          <form action="/add_item" method="POST">
+            <div class="mb-2">
+              <label class="form-label text-muted small fw-bold">ITEM NAME</label>
+              <input type="text" name="item_name" class="form-control" placeholder="e.g. Tissue" required>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-7">
+                <label class="form-label text-muted small fw-bold">UNIT</label>
+                <input type="text" name="unit" class="form-control" placeholder="rolls / bars / kg" required>
+              </div>
+              <div class="col-5">
+                <label class="form-label text-muted small fw-bold">QTY</label>
+                <input type="number" step="any" name="initial_qty" class="form-control" value="0">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-gradient-success w-100">
+              <i class="bi bi-plus-lg me-1"></i> Create Item
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions Card -->
+  <div class="custom-card mt-3">
+    <div class="card-header-bar history">
+      <i class="bi bi-clock-history"></i> Recent Transactions
+    </div>
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Item</th>
+            <th>Action</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in history %}
+          <tr>
+            <td class="text-muted small">{{ t.timestamp }}</td>
+            <td class="fw-semibold">{{ t.item_name }}</td>
+            <td>
+              {% if t.action == 'INITIAL' %}
+                <span class="badge-action-initial">INITIAL</span>
+              {% elif t.action in ('RESTOCK', 'PURCHASE') %}
+                <span class="badge-action-restock">+ RESTOCK</span>
+              {% else %}
+                <span class="badge-action-use">- USE</span>
+              {% endif %}
+            </td>
+            <td><strong>{{ t.quantity }}</strong> <span class="text-muted small">{{ t.unit or '' }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
